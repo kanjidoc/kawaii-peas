@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kawaii Peas</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
+    }
+    .scene {
+      position: relative;
+      width: min(320px, 90vw);
+      height: min(240px, 70vw);
+    }
+
+    /* Pod */
+    .pod {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 120px;
+      background: #7ec850;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      box-shadow: inset 0 -15px 30px rgba(0,0,0,0.1);
+    }
+    .pod-top {
+      position: absolute;
+      bottom: 95px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 240px;
+      height: 70px;
+      background: #8fd460;
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+      clip-path: ellipse(50% 60% at 50% 100%);
+    }
+    .pod-leaf {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-30%) rotate(-20deg);
+      width: 50px;
+      height: 25px;
+      background: #5aad2b;
+      border-radius: 0 80% 0 80%;
+    }
+
+    /* Peas */
+    .pea {
+      position: absolute;
+      bottom: 60px;
+      width: 80px;
+      height: 80px;
+      background: #a8e06c;
+      border-radius: 50%;
+      box-shadow: inset -8px -8px 20px rgba(0,0,0,0.08), inset 4px 4px 10px rgba(255,255,255,0.4);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .pea-left { left: 75px; }
+    .pea-right { right: 75px; }
+
+    /* Faces */
+    .face {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60px;
+      height: 40px;
+    }
+    .eye {
+      position: absolute;
+      top: 8px;
+      width: 8px;
+      height: 10px;
+      background: #333;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    .eye-left { left: 12px; }
+    .eye-right { right: 12px; }
+
+    .cheek {
+      position: absolute;
+      top: 18px;
+      width: 14px;
+      height: 9px;
+      background: rgba(255, 130, 130, 0.45);
+      border-radius: 50%;
+      transition: opacity 0.3s ease;
+    }
+    .cheek-left { left: 4px; }
+    .cheek-right { right: 4px; }
+
+    .mouth {
+      position: absolute;
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 6px;
+      border: 2px solid #333;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      transition: all 0.3s ease;
+    }
+
+    /* Kissing state */
+    .scene.kissing .pea-left { transform: translateX(16px); }
+    .scene.kissing .pea-right { transform: translateX(-16px); }
+
+    .scene.kissing .pea-left .eye,
+    .scene.kissing .pea-right .eye {
+      height: 3px;
+      top: 12px;
+      border-radius: 50%;
+    }
+    .scene.kissing .cheek { opacity: 1; background: rgba(255, 100, 100, 0.55); }
+    .scene.kissing .mouth {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 2px solid #e06080;
+      background: #e06080;
+      bottom: 5px;
+    }
+    .scene.kissing .pea-left .mouth {
+      left: 75%;
+    }
+    .scene.kissing .pea-right .mouth {
+      left: 25%;
+    }
+
+    /* Heart */
+    .heart {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      font-size: 28px;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      pointer-events: none;
+    }
+    .scene.kissing .heart {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
+    }
+
+    .hint {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #bbb;
+      font-size: 13px;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+    .scene.kissing .hint { opacity: 0; }
+
+    /* Mobile: scale the whole scene down */
+    @media (max-width: 400px) {
+      .scene { transform: scale(0.85); }
+    }
+    @media (max-width: 340px) {
+      .scene { transform: scale(0.7); }
+    }
+
+    /* Floating hearts on kiss */
+    @keyframes float-up {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(0.5); }
+    }
+    .float-heart {
+      position: absolute;
+      font-size: 18px;
+      pointer-events: none;
+      animation: float-up 1s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene" id="scene">
+    <div class="pod-leaf"></div>
+    <div class="pod-top"></div>
+    <div class="pod"></div>
+
+    <div class="pea pea-left">
+      <div class="face">
+        <div class="eye eye-left"></div>
+        <div class="eye eye-right"></div>
+        <div class="cheek cheek-left"></div>
+        <div class="cheek cheek-right"></div>
+        <div class="mouth"></div>
+      </div>
+    </div>
+
+    <div class="pea pea-right">
+      <div class="face">
+        <div class="eye eye-left"></div>
+        <div class="eye eye-right"></div>
+        <div class="cheek cheek-left"></div>
+        <div class="cheek cheek-right"></div>
+        <div class="mouth"></div>
+      </div>
+    </div>
+
+    <div class="heart">💕</div>
+    <div class="hint">tap us!</div>
+  </div>
+
+  <script>
+    const scene = document.getElementById('scene');
+    const hint = document.querySelector('.hint');
+    let kissing = false;
+
+    scene.addEventListener('click', () => {
+      if (kissing) return;
+      kissing = true;
+      hint.style.opacity = '0';
+      scene.classList.add('kissing');
+
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.className = 'float-heart';
+          heart.textContent = ['💗', '💕', '💖', '💘', '❤️'][i];
+          heart.style.left = (120 + Math.random() * 80) + 'px';
+          heart.style.top = (30 + Math.random() * 40) + 'px';
+          scene.appendChild(heart);
+          setTimeout(() => heart.remove(), 1000);
+        }, i * 150);
+      }
+
+      setTimeout(() => {
+        scene.classList.remove('kissing');
+        hint.style.opacity = '1';
+        kissing = false;
+      }, 1500);
+    });
+
+    // Support tap on mobile
+    scene.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      scene.click();
+    });
+  </script>
+</body>
+</html>
